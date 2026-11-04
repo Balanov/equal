@@ -1,6 +1,6 @@
 {
   "suite": "equal-http-replay-v1",
-  "measured_at_utc": "2026-11-04T17:34:52.576443+00:00",
+  "measured_at_utc": "2026-11-04T19:01:49.431711+00:00",
   "method": "2000 unique GET requests per fresh server; 16 keep-alive clients; startup/import excluded; rotating candidate order",
   "platform": "Windows-11-10.0.28020-SP0",
   "machine": "AMD64",
@@ -12,77 +12,77 @@
   "results": [
     {
       "candidate": "equal",
-      "version": "EQUAL 0.1.0",
+      "version": "EQUAL 0.2.0",
       "runs": 9,
-      "median_ms": 235.152,
-      "p95_ms": 247.689,
-      "min_ms": 228.252,
-      "max_ms": 247.689,
-      "median_requests_per_second": 8505.123,
-      "median_working_set_bytes": 15130624,
+      "median_ms": 269.472,
+      "p95_ms": 277.14,
+      "min_ms": 265.355,
+      "max_ms": 277.14,
+      "median_requests_per_second": 7421.913,
+      "median_working_set_bytes": 15282176,
       "samples": [
         {
           "run": 1,
-          "wall_ms": 229.63,
+          "wall_ms": 277.14,
           "requests": 2000,
-          "requests_per_second": 8709.682,
-          "working_set_bytes": 14974976
+          "requests_per_second": 7216.58,
+          "working_set_bytes": 15462400
         },
         {
           "run": 2,
-          "wall_ms": 235.884,
+          "wall_ms": 268.53,
           "requests": 2000,
-          "requests_per_second": 8478.733,
-          "working_set_bytes": 15880192
+          "requests_per_second": 7447.946,
+          "working_set_bytes": 15507456
         },
         {
           "run": 3,
-          "wall_ms": 237.185,
+          "wall_ms": 268.116,
           "requests": 2000,
-          "requests_per_second": 8432.236,
-          "working_set_bytes": 14721024
+          "requests_per_second": 7459.45,
+          "working_set_bytes": 15011840
         },
         {
           "run": 4,
-          "wall_ms": 247.689,
+          "wall_ms": 265.586,
           "requests": 2000,
-          "requests_per_second": 8074.652,
-          "working_set_bytes": 14987264
+          "requests_per_second": 7530.517,
+          "working_set_bytes": 15466496
         },
         {
           "run": 5,
-          "wall_ms": 235.613,
+          "wall_ms": 269.472,
           "requests": 2000,
-          "requests_per_second": 8488.489,
-          "working_set_bytes": 15130624
+          "requests_per_second": 7421.913,
+          "working_set_bytes": 14929920
         },
         {
           "run": 6,
-          "wall_ms": 234.287,
+          "wall_ms": 276.346,
           "requests": 2000,
-          "requests_per_second": 8536.542,
-          "working_set_bytes": 14786560
+          "requests_per_second": 7237.299,
+          "working_set_bytes": 15474688
         },
         {
           "run": 7,
-          "wall_ms": 232.225,
+          "wall_ms": 271.063,
           "requests": 2000,
-          "requests_per_second": 8612.333,
-          "working_set_bytes": 15491072
+          "requests_per_second": 7378.359,
+          "working_set_bytes": 15282176
         },
         {
           "run": 8,
-          "wall_ms": 235.152,
+          "wall_ms": 265.355,
           "requests": 2000,
-          "requests_per_second": 8505.123,
-          "working_set_bytes": 15425536
+          "requests_per_second": 7537.079,
+          "working_set_bytes": 15118336
         },
         {
           "run": 9,
-          "wall_ms": 228.252,
+          "wall_ms": 274.325,
           "requests": 2000,
-          "requests_per_second": 8762.234,
-          "working_set_bytes": 15511552
+          "requests_per_second": 7290.625,
+          "working_set_bytes": 14909440
         }
       ]
     },
@@ -90,75 +90,75 @@
       "candidate": "hoverfly",
       "version": "v1.12.17",
       "runs": 9,
-      "median_ms": 519.807,
-      "p95_ms": 530.859,
-      "min_ms": 510.967,
-      "max_ms": 530.859,
-      "median_requests_per_second": 3847.581,
-      "median_working_set_bytes": 33173504,
+      "median_ms": 551.879,
+      "p95_ms": 559.947,
+      "min_ms": 531.573,
+      "max_ms": 559.947,
+      "median_requests_per_second": 3623.984,
+      "median_working_set_bytes": 33538048,
       "samples": [
         {
           "run": 1,
-          "wall_ms": 510.967,
+          "wall_ms": 559.947,
           "requests": 2000,
-          "requests_per_second": 3914.144,
-          "working_set_bytes": 33075200
+          "requests_per_second": 3571.763,
+          "working_set_bytes": 33153024
         },
         {
           "run": 2,
-          "wall_ms": 530.859,
+          "wall_ms": 555.743,
           "requests": 2000,
-          "requests_per_second": 3767.479,
-          "working_set_bytes": 32530432
+          "requests_per_second": 3598.786,
+          "working_set_bytes": 34045952
         },
         {
           "run": 3,
-          "wall_ms": 517.004,
+          "wall_ms": 532.603,
           "requests": 2000,
-          "requests_per_second": 3868.444,
-          "working_set_bytes": 33243136
+          "requests_per_second": 3755.143,
+          "working_set_bytes": 34082816
         },
         {
           "run": 4,
-          "wall_ms": 527.317,
+          "wall_ms": 531.573,
           "requests": 2000,
-          "requests_per_second": 3792.781,
-          "working_set_bytes": 33329152
+          "requests_per_second": 3762.418,
+          "working_set_bytes": 33525760
         },
         {
           "run": 5,
-          "wall_ms": 520.627,
+          "wall_ms": 553.415,
           "requests": 2000,
-          "requests_per_second": 3841.525,
-          "working_set_bytes": 32100352
+          "requests_per_second": 3613.926,
+          "working_set_bytes": 32280576
         },
         {
           "run": 6,
-          "wall_ms": 525.624,
+          "wall_ms": 536.045,
           "requests": 2000,
-          "requests_per_second": 3805.003,
-          "working_set_bytes": 34197504
+          "requests_per_second": 3731.03,
+          "working_set_bytes": 34537472
         },
         {
           "run": 7,
-          "wall_ms": 519.807,
+          "wall_ms": 551.879,
           "requests": 2000,
-          "requests_per_second": 3847.581,
-          "working_set_bytes": 31453184
+          "requests_per_second": 3623.984,
+          "working_set_bytes": 33787904
         },
         {
           "run": 8,
-          "wall_ms": 518.109,
+          "wall_ms": 555.802,
           "requests": 2000,
-          "requests_per_second": 3860.194,
-          "working_set_bytes": 33878016
+          "requests_per_second": 3598.405,
+          "working_set_bytes": 33243136
         },
         {
           "run": 9,
-          "wall_ms": 514.872,
+          "wall_ms": 536.477,
           "requests": 2000,
-          "requests_per_second": 3884.458,
-          "working_set_bytes": 33173504
+          "requests_per_second": 3728.024,
+          "working_set_bytes": 33538048
         }
       ]
     }

@@ -53,6 +53,8 @@ jobs:
       - run: python bench/render_site.py
       - run: npm ci --prefix site
       - run: npm run build --prefix site
+      - name: Validate the generated OpenAPI document
+        run: npm exec --yes --package=@seriousme/openapi-schema-validator -- validate-api examples/openapi.json
   cross-build:
     needs: test
     strategy:

@@ -16,6 +16,8 @@ The default listener is loopback-only. Exposing it on another interface can expo
 
 ## Protocol limits
 
-Version 0.1.0 buffers request and response bodies up to the configured limit (16 MiB by default). It supports ordinary HTTP/1.x request-response traffic through a reverse proxy. It does not record WebSocket sessions, server-sent event streams, HTTP/2 prioritization, multipart streaming semantics, or traffic from SDKs that cannot use an HTTP base URL. Redirects are preserved, not followed. Verification compares status, Content-Type, Location, and the body by default; additional headers require `--compare-header`.
+Version 0.2.0 buffers request and response bodies up to the configured limit (16 MiB by default). It supports ordinary HTTP/1.x request-response traffic through a reverse proxy. It does not record WebSocket sessions, server-sent event streams, HTTP/2 prioritization, multipart streaming semantics, or traffic from SDKs that cannot use an HTTP base URL. Redirects are preserved, not followed. Verification compares status, Content-Type, Location, and the body by default; additional headers require `--compare-header`.
+
+OpenAPI export inherits the cassette's redactions and coverage limits. It includes observed examples and inferred schemas only; it is not an authoritative provider contract. Review generated documents before publishing them just as you review cassettes.
 
 Report vulnerabilities privately through a GitHub security advisory rather than attaching sensitive captures to a public issue.

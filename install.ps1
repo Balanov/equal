@@ -1,6 +1,6 @@
 # Install EQUAL from the latest GitHub release with a SHA-256 checksum check.
 # Usage: irm https://raw.githubusercontent.com/Balanov/equal/main/install.ps1 | iex
-# Optional: $env:EQUAL_VERSION = "0.1.0"; $env:EQUAL_INSTALL_DIR = "C:\Tools"
+# Optional: $env:EQUAL_VERSION = "0.2.0"; $env:EQUAL_INSTALL_DIR = "C:\Tools"
 $ErrorActionPreference = "Stop"
 $repo = "Balanov/equal"
 $version = $env:EQUAL_VERSION

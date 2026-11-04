@@ -19,7 +19,7 @@ import (
 	"github.com/Balanov/equal/internal/lab"
 )
 
-var Version = "0.1.0"
+var Version = "0.2.0"
 
 type stringsFlag []string
 
@@ -55,6 +55,8 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 		incompatible, err = runVerify(args[1:], stdout)
 	case "inspect":
 		err = runInspect(args[1:], stdout)
+	case "export":
+		err = runExport(args[1:], stdout)
 	case "help", "--help", "-h":
 		usage(stdout)
 		return 0
@@ -77,17 +79,18 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 }
 
 func usage(writer io.Writer) {
-	fmt.Fprintln(writer, `EQUAL — one cassette, both sides of the API.
+	fmt.Fprintln(writer, `EQUAL — turn real API traffic into a local sandbox and OpenAPI.
 
 Usage:
   equal record --target URL --cassette FILE [--listen ADDR]
   equal replay --cassette FILE [--listen ADDR] [--strict]
+  equal export --cassette FILE [--out openapi.json]
   equal verify --target URL --cassette FILE [--json REPORT]
   equal inspect --cassette FILE [--json]
   equal --version
 
 Defaults: listen 127.0.0.1:8080, max body 16 MiB.
-Exit codes: 0 compatible, 1 runtime error, 2 usage, 3 incompatible.`)
+Exit codes: 0 success, 1 runtime error, 2 usage, 3 incompatible.`)
 }
 
 func newFlags(name string, stderr io.Writer) *flag.FlagSet {
@@ -258,6 +261,41 @@ func runInspect(args []string, stdout io.Writer) error {
 	fmt.Fprintf(stdout, "format:       %s\ncreated_at:   %s\ntarget:       %s\ninteractions: %d\nredactions:   %s\n", header.Format, header.CreatedAt, header.Target, len(entries), strings.Join(header.Redactions, ", "))
 	for _, entry := range entries {
 		fmt.Fprintf(stdout, "#%d %s %s → %d\n", entry.ID, entry.Request.Method, entry.Request.URI, entry.Response.Status)
+	}
+	return nil
+}
+
+func runExport(args []string, stdout io.Writer) error {
+	flags := newFlags("export", stdout)
+	path := flags.String("cassette", "", "input JSONL cassette")
+	output := flags.String("out", "", "output OpenAPI JSON file; stdout when omitted")
+	title := flags.String("title", "Observed API", "OpenAPI document title")
+	version := flags.String("api-version", "0.1.0", "API version recorded in the document")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	if flags.NArg() != 0 || *path == "" {
+		return errors.New("export requires --cassette and accepts no positional arguments")
+	}
+	header, entries, err := cassette.Load(*path)
+	if err != nil {
+		return err
+	}
+	document := cassette.OpenAPI(header, entries, *title, *version)
+	writer := stdout
+	if *output != "" {
+		file, err := os.OpenFile(*output, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
+		if err != nil {
+			return fmt.Errorf("create OpenAPI output: %w", err)
+		}
+		writer = file
+		defer func() { _ = file.Close() }()
+	}
+	encoder := json.NewEncoder(writer)
+	encoder.SetIndent("", "  ")
+	encoder.SetEscapeHTML(false)
+	if err := encoder.Encode(document); err != nil {
+		return fmt.Errorf("write OpenAPI document: %w", err)
 	}
 	return nil
 }

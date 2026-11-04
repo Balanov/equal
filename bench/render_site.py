@@ -20,4 +20,8 @@ public = site / "public" / "results"
 public.mkdir(parents=True, exist_ok=True)
 for name in ["windows-amd64-startup.json", "windows-amd64-replay.json", "windows-amd64-proof.json"]:
     shutil.copyfile(results / name, public / name)
+examples = site / "public" / "examples"
+examples.mkdir(parents=True, exist_ok=True)
+for name in ["cassette.jsonl", "openapi.json"]:
+    shutil.copyfile(root / "examples" / name, examples / name)
 print("site evidence updated")

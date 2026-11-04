@@ -1,0 +1,146 @@
+{
+  "info": {
+    "description": "Generated from observed EQUAL traffic. This is an incomplete, example-driven description, not the provider's authoritative schema.",
+    "title": "EQUAL observed API example",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/users": {
+      "post": {
+        "description": "Generated from recorded traffic; unobserved behavior is not described.",
+        "operationId": "post_v1_users",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Ada",
+                "password": "[REDACTED]"
+              },
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "password"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "active": true,
+                  "id": 43,
+                  "name": "Ada"
+                },
+                "schema": {
+                  "properties": {
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "active",
+                    "id",
+                    "name"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Observed response"
+          }
+        },
+        "x-equal-observed-interactions": [
+          2
+        ]
+      }
+    },
+    "/v1/users/{id}": {
+      "get": {
+        "description": "Generated from recorded traffic; unobserved behavior is not described.",
+        "operationId": "get_v1_users_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "example": "profile",
+            "in": "query",
+            "name": "include",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "active": true,
+                  "id": 42,
+                  "name": "Ada"
+                },
+                "schema": {
+                  "properties": {
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "active",
+                    "id",
+                    "name"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Observed response"
+          }
+        },
+        "x-equal-observed-interactions": [
+          1
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com"
+    }
+  ],
+  "x-equal-format": "equal/v1",
+  "x-equal-warning": "Only recorded interactions are represented. Numeric and UUID path segments are inferred parameters; redacted examples remain redacted."
+}

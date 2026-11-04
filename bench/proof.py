@@ -167,6 +167,11 @@ def main():
             check("cassette is readable JSONL", len(captured.splitlines()) == 4, f"{len(captured.splitlines())} lines")
             inspected = run([str(executable), "inspect", "--cassette", str(cassette)])
             check("inspect sees three interactions", "interactions: 3" in inspected)
+            openapi_path = root / "openapi.json"
+            run([str(executable), "export", "--cassette", str(cassette), "--out", str(openapi_path), "--title", "Proof API"])
+            openapi = json.loads(openapi_path.read_text(encoding="utf-8"))
+            check("export writes valid OpenAPI 3.1", openapi["openapi"] == "3.1.0" and openapi["info"]["title"] == "Proof API")
+            check("export includes observed endpoints and redactions", "/v1/items" in openapi["paths"] and "live-body-secret" not in openapi_path.read_text(encoding="utf-8"))
 
             replay_port = free_port()
             replay = start_process([

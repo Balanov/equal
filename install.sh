@@ -1,7 +1,7 @@
 #!/bin/sh
 # Install EQUAL from the latest GitHub release with a SHA-256 checksum check.
 # Usage: curl -fsSL https://raw.githubusercontent.com/Balanov/equal/main/install.sh | sh
-# Optional: EQUAL_VERSION=0.1.0 EQUAL_INSTALL_DIR=/usr/local/bin sh install.sh
+# Optional: EQUAL_VERSION=0.2.0 EQUAL_INSTALL_DIR=/usr/local/bin sh install.sh
 set -eu
 
 repo="Balanov/equal"

@@ -1,6 +1,6 @@
 # Design context and project boundary
 
-EQUAL was scoped around the shared compatibility problem faced by clean-room replacements, API migrations, and offline integration tests. Another general mock server or another language-specific VCR would not create a meaningful new boundary by itself.
+EQUAL is scoped around a broad development problem: applications need a usable local API when a provider is unavailable, rate-limited, paid per call, or unsafe to trigger from CI. The primary workflow produces a local server and an OpenAPI document from real application traffic. Clean-room replacements and migrations additionally benefit from differential verification, but they are not the product's only audience.
 
 ## OccupySaaS
 
@@ -20,7 +20,7 @@ EQUAL moves the same idea outside the language. Any SDK that can use a local HTT
 
 [Hoverfly](https://docs.hoverfly.io/) already provides capture, simulation, middleware, and service virtualization. Its [diff mode](https://docs.hoverfly.io/en/latest/pages/keyconcepts/modes/diff.html) compares live responses with stored simulations and exposes differences through an admin API.
 
-EQUAL deliberately does not recreate that entire product. Its narrower contribution is a single-command, two-direction workflow with one JSONL artifact, no admin API, explicit process exit codes, and field-level semantic JSON verification. The included benchmark compares only exact-path replay; it does not argue that EQUAL has feature parity with Hoverfly.
+EQUAL deliberately does not recreate that entire product. Its contribution is a single-command local development workflow: replay observed traffic on localhost, export OpenAPI 3.1, and optionally run field-level semantic verification. There is no admin API or control plane. The included benchmark compares only exact-path replay; it does not argue that EQUAL has feature parity with Hoverfly.
 
 ## WireMock and programmable stubs
 
@@ -37,9 +37,10 @@ EQUAL takes the opposite boundary: HTTP is the only connector. It does not know 
 ## Resulting product boundary
 
 1. One portable cassette represents observed requests and responses.
-2. Replay proves an offline client scenario without any live fallback.
-3. Verify sends the same requests to a candidate and explains differences.
-4. Secret redaction and mismatches fail explicitly rather than disappearing into convenience behavior.
-5. A tiny static binary and open format make the workflow forkable and embeddable in any CI system.
+2. Replay provides a local API for offline development without any live fallback.
+3. Export turns the same evidence into OpenAPI 3.1 for the existing API ecosystem.
+4. Verify sends recorded requests to a candidate and explains differences.
+5. Secret redaction and mismatches fail explicitly rather than disappearing into convenience behavior.
+6. A tiny static binary and open formats make the workflow forkable and embeddable in any CI system.
 
 This keeps EQUAL independently useful while leaving workflow orchestration, schema coverage, production virtualization, and vendor-specific integration logic to tools designed for those jobs.

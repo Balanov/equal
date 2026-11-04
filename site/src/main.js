@@ -1,13 +1,19 @@
-import "@fontsource/ibm-plex-sans/latin-400.css";
-import "@fontsource/ibm-plex-sans/latin-500.css";
-import "@fontsource/ibm-plex-sans/latin-600.css";
-import "@fontsource/ibm-plex-sans/cyrillic-400.css";
-import "@fontsource/ibm-plex-sans/cyrillic-500.css";
-import "@fontsource/ibm-plex-sans/cyrillic-600.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
-import "@fontsource/ibm-plex-mono/latin-500.css";
-import "@fontsource/ibm-plex-mono/cyrillic-400.css";
-import "@fontsource/ibm-plex-mono/cyrillic-500.css";
+import "@fontsource/manrope/latin-400.css";
+import "@fontsource/manrope/latin-500.css";
+import "@fontsource/manrope/latin-600.css";
+import "@fontsource/manrope/latin-700.css";
+import "@fontsource/manrope/latin-800.css";
+import "@fontsource/manrope/cyrillic-400.css";
+import "@fontsource/manrope/cyrillic-500.css";
+import "@fontsource/manrope/cyrillic-600.css";
+import "@fontsource/manrope/cyrillic-700.css";
+import "@fontsource/manrope/cyrillic-800.css";
+import "@fontsource/jetbrains-mono/latin-400.css";
+import "@fontsource/jetbrains-mono/latin-500.css";
+import "@fontsource/jetbrains-mono/latin-600.css";
+import "@fontsource/jetbrains-mono/cyrillic-400.css";
+import "@fontsource/jetbrains-mono/cyrillic-500.css";
+import "@fontsource/jetbrains-mono/cyrillic-600.css";
 import "./style.css";
 import { messages } from "./i18n.js";
 import { evidence } from "./results.js";
@@ -15,153 +21,80 @@ import { evidence } from "./results.js";
 const storedLanguage = localStorage.getItem("equal-language");
 const browserLanguages = navigator.languages || [navigator.language];
 let language = storedLanguage || (browserLanguages.some((item) => item.toLowerCase().startsWith("ru")) ? "ru" : "en");
-let demoMode = "record";
-let commandMode = "record";
-let benchmarkMode = "replay";
+let demoStep = 0;
+
+const responseBody = `{
+  "order_id": 1042,
+  "status": "paid",
+  "total": 1490
+}`;
+const offlineBody = `{
+  "error": "provider unavailable"
+}`;
 
 const demoContent = {
-  en: {
-    record: { status: "RECORDING", core: "record", target: "ORIGINAL API", note: "live traffic", cassette: '{"format":"equal/v1"}', events: ["request captured", "secrets redacted", "response unchanged"] },
-    replay: { status: "OFFLINE", core: "replay", target: "UPSTREAM OFFLINE", note: "0 network calls", cassette: '{"id":1,"status":200}', events: ["request matched", "cassette read", "response returned"] },
-    verify: { status: "DIFFING", core: "verify", target: "CANDIDATE API", note: "field-level diff", cassette: '{"passed":3,"failed":0}', events: ["3/3 compatible", "drift located", "exit 0 or 3"] },
-  },
-  ru: {
-    record: { status: "ЗАПИСЬ", core: "record", target: "ORIGINAL API", note: "живой трафик", cassette: '{"format":"equal/v1"}', events: ["запрос записан", "секреты скрыты", "ответ не изменён"] },
-    replay: { status: "ОФЛАЙН", core: "replay", target: "UPSTREAM ВЫКЛ.", note: "0 сетевых вызовов", cassette: '{"id":1,"status":200}', events: ["запрос совпал", "cassette прочитана", "ответ возвращён"] },
-    verify: { status: "СРАВНЕНИЕ", core: "verify", target: "CANDIDATE API", note: "diff по полям", cassette: '{"passed":3,"failed":0}', events: ["3/3 совместимо", "drift найден", "код 0 или 3"] },
-  },
+  en: [
+    { network: "ONLINE", status: "200 OK", source: "api.example.com", body: responseBody, explanation: "This response came from the real provider. Save it before the next sandbox outage.", action: "Save this response for offline", cassette: "not created yet", openapi: "not created yet" },
+    { network: "RECORDED", status: "SAVED", source: "cassette.jsonl", body: responseBody, explanation: "The response is now a local file. You can replay it or turn the observed calls into an OpenAPI specification.", action: "Disconnect the provider", cassette: "recorded · ready", openapi: "ready to export" },
+    { network: "OFFLINE", status: "NO NETWORK", source: "provider unavailable", body: offlineBody, explanation: "The real provider is no longer reachable. Start the local copy and give your application the same localhost URL.", action: "Start the local server", cassette: "ready on this machine", openapi: "ready to export" },
+    { network: "LOCAL", status: "200 OK", source: "127.0.0.1:8080", body: responseBody, explanation: "Your application received the recorded response without a network call. The OpenAPI file is ready to import too.", action: "Reset the demo", cassette: "served offline", openapi: "valid · ready" },
+  ],
+  ru: [
+    { network: "ОНЛАЙН", status: "200 OK", source: "api.example.com", body: responseBody, explanation: "Этот ответ пришёл от настоящего провайдера. Сохраните его до следующего сбоя тестовой площадки.", action: "Сохранить ответ для офлайна", cassette: "ещё не создан", openapi: "ещё не создан" },
+    { network: "ЗАПИСАНО", status: "СОХРАНЕНО", source: "cassette.jsonl", body: responseBody, explanation: "Ответ теперь сохранён локально. Его можно воспроизвести или превратить записанные вызовы в спецификацию OpenAPI.", action: "Отключить провайдера", cassette: "записан · готов", openapi: "готов к экспорту" },
+    { network: "ОФЛАЙН", status: "НЕТ СЕТИ", source: "провайдер недоступен", body: offlineBody, explanation: "Настоящий провайдер больше недоступен. Запустите локальную копию и оставьте приложению тот же адрес на localhost.", action: "Запустить локальный сервер", cassette: "готов на этом компьютере", openapi: "готов к экспорту" },
+    { network: "ЛОКАЛЬНО", status: "200 OK", source: "127.0.0.1:8080", body: responseBody, explanation: "Приложение получило записанный ответ без единого сетевого вызова. OpenAPI-файл тоже готов к импорту.", action: "Повторить демонстрацию", cassette: "отдан офлайн", openapi: "валиден · готов" },
+  ],
 };
 
-const commandContent = {
-  record: {
-    title: "sh — equal record", source: "https://github.com/Balanov/equal#record",
-    code: `equal record \\
-  --target https://api.example.com \\
-  --cassette account.jsonl
-
-# point your SDK to http://127.0.0.1:8080`,
-    output: `listening on 127.0.0.1:8080
-#1 GET /v1/account → 200
-Authorization: [REDACTED]`,
-  },
-  replay: {
-    title: "sh — equal replay", source: "https://github.com/Balanov/equal#replay",
-    code: `equal replay \\
-  --cassette account.jsonl \\
-  --strict
-
-# original API is not contacted`,
-    output: `EQUAL replay 3 interactions
-upstream network: disabled
-unknown request → 404`,
-  },
-  verify: {
-    title: "sh — equal verify", source: "https://github.com/Balanov/equal#verify",
-    code: `equal verify \\
-  --target http://127.0.0.1:9000 \\
-  --cassette account.jsonl \\
-  --ignore-json '/request_id' \\
-  --json report.json`,
-    output: `EQUAL verify: 3/3 compatible · 0 failed
-exit code 0
-
-# drift → field-level diff + exit 3`,
-  },
-};
-
-function text(key, replacements = {}) {
-  let value = messages[language][key] ?? key;
-  for (const [name, replacement] of Object.entries(replacements)) value = value.replaceAll(`{${name}}`, replacement);
-  return value;
+function text(key) {
+  return messages[language][key] ?? key;
 }
 
-function formatNumber(value, digits = 3) {
+function formatNumber(value, digits = 2) {
   return new Intl.NumberFormat(language === "ru" ? "ru-RU" : "en-US", { maximumFractionDigits: digits }).format(value);
 }
 
 function formatMs(value) {
-  return `${formatNumber(value)} ${language === "ru" ? "мс" : "ms"}`;
+  return `${formatNumber(value, 3)} ${language === "ru" ? "мс" : "ms"}`;
 }
 
 function formatBytes(value) {
-  return value == null ? "—" : `${formatNumber(value / 1048576, 2)} MiB`;
+  return `${formatNumber(value / 1048576, 2)} ${language === "ru" ? "МиБ" : "MiB"}`;
 }
 
-function setDemo(mode) {
-  demoMode = mode;
-  const content = demoContent[language][mode];
-  document.querySelector("#lab-demo").dataset.mode = mode;
-  document.querySelectorAll(".demo-tabs [data-mode]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.mode === mode)));
+function renderDemo() {
+  const content = demoContent[language][demoStep];
+  const sandbox = document.querySelector("#sandbox");
+  sandbox.dataset.step = String(demoStep);
+  document.querySelector("#network-state").textContent = content.network;
   document.querySelector("#demo-status").textContent = content.status;
-  document.querySelector("#demo-core").textContent = content.core;
-  document.querySelector("#demo-target").textContent = content.target;
-  document.querySelector("#demo-target-note").textContent = content.note;
-  document.querySelector("#demo-cassette").textContent = content.cassette;
-  content.events.forEach((event, index) => { document.querySelector(`#demo-event-${index + 1}`).textContent = event; });
-}
-
-function setCommand(mode) {
-  commandMode = mode;
-  const content = commandContent[mode];
-  document.querySelectorAll(".workflow-tabs [data-command]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.command === mode)));
-  document.querySelector("#terminal-title").textContent = content.title;
-  document.querySelector("#command-code").textContent = content.code;
-  document.querySelector("#command-output").textContent = content.output;
-  document.querySelector("#command-source").href = content.source;
-}
-
-function candidateName(candidate) {
-  return candidate === "equal" ? "EQUAL 0.1.0" : "Hoverfly 1.12.17";
+  document.querySelector("#demo-source").textContent = content.source;
+  document.querySelector("#demo-response").textContent = content.body;
+  document.querySelector("#demo-explanation").textContent = content.explanation;
+  document.querySelector("#demo-action-label").textContent = content.action;
+  document.querySelector("#cassette-note").textContent = content.cassette;
+  document.querySelector("#openapi-note").textContent = content.openapi;
 }
 
 function renderBenchmark() {
-  document.querySelectorAll("[data-benchmark]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.benchmark === benchmarkMode)));
-  const report = evidence[benchmarkMode];
-  const results = report.results;
-  const equal = results.find((result) => result.candidate === "equal");
-  const hoverfly = results.find((result) => result.candidate === "hoverfly");
-  const ratio = hoverfly.median_ms / equal.median_ms;
-  const max = Math.max(...results.map((result) => result.median_ms));
-  document.querySelector("#advantage-value").textContent = `${formatNumber(ratio, 2)}×`;
-  document.querySelector("#advantage-label").textContent = text(`bench.${benchmarkMode}Advantage`);
-  document.querySelector("#benchmark-context").textContent = text(`bench.${benchmarkMode}Context`);
-  document.querySelector("#benchmark-method").textContent = text(`bench.${benchmarkMode}Method`);
-  document.querySelector("#raw-result-link").href = `./results/windows-amd64-${benchmarkMode}.json`;
-  document.querySelector("#benchmarks thead th:nth-child(4)").textContent = text(benchmarkMode === "replay" ? "bench.rate" : "bench.launches");
-  document.querySelector("#benchmarks thead th:nth-child(5)").textContent = text(benchmarkMode === "replay" ? "bench.memory" : "bench.executable");
-  const chart = document.querySelector("#benchmark-chart");
-  chart.replaceChildren(...results.map((result) => {
-    const row = document.createElement("div");
-    row.className = `bar-row ${result.candidate === "equal" ? "is-equal" : ""}`;
-    const name = document.createElement("span");
-    name.className = "bar-name";
-    name.textContent = candidateName(result.candidate);
-    const track = document.createElement("div");
-    track.className = "bar-track";
-    const fill = document.createElement("div");
-    fill.className = "bar-fill";
-    fill.style.setProperty("--scale", (result.median_ms / max).toFixed(5));
-    track.append(fill);
-    const value = document.createElement("strong");
-    value.className = "bar-value";
-    value.textContent = formatMs(result.median_ms);
-    row.append(name, track, value);
-    return row;
-  }));
-  const body = document.querySelector("#benchmark-table-body");
-  body.replaceChildren(...results.map((result) => {
-    const row = document.createElement("tr");
-    if (result.candidate === "equal") row.className = "is-equal";
-    const fourth = benchmarkMode === "replay" ? formatNumber(result.median_requests_per_second) : formatNumber(1000 / result.median_ms, 1);
-    const fifth = benchmarkMode === "replay" ? formatBytes(result.median_working_set_bytes) : formatBytes(result.executable_bytes);
-    const values = [candidateName(result.candidate), formatMs(result.median_ms), formatMs(result.p95_ms), fourth, fifth];
-    row.append(...values.map((value) => {
-      const cell = document.createElement("td");
-      cell.textContent = value;
-      return cell;
-    }));
-    return row;
-  }));
+  const replay = evidence.replay.results;
+  const startup = evidence.startup.results;
+  const replayEqual = replay.find((result) => result.candidate === "equal");
+  const replayOther = replay.find((result) => result.candidate === "hoverfly");
+  const startupEqual = startup.find((result) => result.candidate === "equal");
+  const startupOther = startup.find((result) => result.candidate === "hoverfly");
+  document.querySelector("#metric-replay").textContent = `${formatNumber(replayOther.median_ms / replayEqual.median_ms)}×`;
+  document.querySelector("#metric-replay-detail").textContent = `${formatMs(replayEqual.median_ms)} vs ${formatMs(replayOther.median_ms)}`;
+  document.querySelector("#metric-startup").textContent = `${formatNumber(startupOther.median_ms / startupEqual.median_ms)}×`;
+  document.querySelector("#metric-startup-detail").textContent = `${formatMs(startupEqual.median_ms)} vs ${formatMs(startupOther.median_ms)}`;
+  document.querySelector("#metric-memory").textContent = `${formatNumber(replayOther.median_working_set_bytes / replayEqual.median_working_set_bytes)}×`;
+  document.querySelector("#metric-memory-detail").textContent = `${formatBytes(replayEqual.median_working_set_bytes)} vs ${formatBytes(replayOther.median_working_set_bytes)}`;
+}
+
+function setCopyLabel(button, key) {
+  const label = button.classList.contains("install-command") ? button.querySelector("span") : button;
+  label.textContent = text(key);
 }
 
 function translate() {
@@ -176,11 +109,8 @@ function translate() {
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  document.querySelectorAll("[data-copy-target]").forEach((button) => {
-    if (button.tagName === "BUTTON") button.textContent = text("quick.copy");
-  });
-  setDemo(demoMode);
-  setCommand(commandMode);
+  document.querySelectorAll("[data-copy-target]").forEach((button) => setCopyLabel(button, "copy"));
+  renderDemo();
   renderBenchmark();
   localStorage.setItem("equal-language", language);
 }
@@ -201,35 +131,40 @@ async function copyText(value) {
   if (!copied) throw new Error("copy unavailable");
 }
 
-document.querySelectorAll("[data-copy-target]").forEach((button) => {
-  if (button.tagName !== "BUTTON") return;
-  button.addEventListener("click", async () => {
-    const target = document.querySelector(button.dataset.copyTarget);
-    if (!target) return;
-    try {
-      await copyText(target.textContent);
-      button.textContent = text("quick.copied");
-    } catch {
-      button.textContent = text("quick.failed");
-    }
-    window.setTimeout(() => { button.textContent = text("quick.copy"); }, 1500);
-  });
+document.querySelector("#demo-action").addEventListener("click", () => {
+  demoStep = demoStep === 3 ? 0 : demoStep + 1;
+  renderDemo();
 });
 
 document.querySelectorAll("[data-lang]").forEach((button) => button.addEventListener("click", () => {
   language = button.dataset.lang;
   translate();
 }));
-document.querySelectorAll(".demo-tabs [data-mode]").forEach((button) => button.addEventListener("click", () => setDemo(button.dataset.mode)));
-document.querySelector("#demo-next").addEventListener("click", () => {
-  const modes = ["record", "replay", "verify"];
-  setDemo(modes[(modes.indexOf(demoMode) + 1) % modes.length]);
+
+document.querySelectorAll("[data-copy-target]").forEach((button) => {
+  button.addEventListener("click", async () => {
+    const target = document.querySelector(button.dataset.copyTarget);
+    if (!target) return;
+    try {
+      await copyText(target.textContent);
+      setCopyLabel(button, "copied");
+    } catch {
+      setCopyLabel(button, "copyFailed");
+    }
+    window.setTimeout(() => setCopyLabel(button, "copy"), 1500);
+  });
 });
-document.querySelectorAll(".workflow-tabs [data-command]").forEach((button) => button.addEventListener("click", () => setCommand(button.dataset.command)));
-document.querySelectorAll("[data-benchmark]").forEach((button) => button.addEventListener("click", () => {
-  benchmarkMode = button.dataset.benchmark;
-  renderBenchmark();
-}));
+
+function setDownloadTarget() {
+  const agent = navigator.userAgent.toLowerCase();
+  let os = "windows";
+  let arch = "amd64";
+  if (agent.includes("mac")) os = "darwin";
+  else if (agent.includes("linux") && !agent.includes("windows")) os = "linux";
+  if (agent.includes("arm64") || agent.includes("aarch64")) arch = "arm64";
+  const extension = os === "windows" ? ".exe" : "";
+  document.querySelector("#download-main").href = `https://github.com/Balanov/equal/releases/download/v0.2.0/equal-${os}-${arch}${extension}`;
+}
 
 async function loadGitHubStats() {
   const controller = new AbortController();
@@ -248,5 +183,6 @@ async function loadGitHubStats() {
   }
 }
 
+setDownloadTarget();
 translate();
 loadGitHubStats();

@@ -1,22 +1,23 @@
 cff-version: 1.2.0
 message: If you use EQUAL, please cite it as below.
-title: "EQUAL: One Cassette, Both Sides of the API"
+title: "EQUAL: Turn Real API Traffic into a Local Sandbox and OpenAPI"
 authors:
   - family-names: Balanov
     given-names: Anton
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-11-04
 url: https://balanov.pro/equal/
 repository-code: https://github.com/Balanov/equal
 license: MIT
 type: software
 abstract: >-
-  EQUAL is a language-neutral HTTP compatibility laboratory. It records real
-  SDK traffic into a redacted JSONL cassette, replays it offline, and verifies
-  another API implementation with semantic, field-level differences.
+  EQUAL records real application HTTP traffic into a redacted JSONL cassette,
+  serves it as a local API, generates an OpenAPI 3.1 document, and verifies
+  another implementation with semantic, field-level differences.
 keywords:
-  - API compatibility
+  - local API sandbox
+  - OpenAPI
   - record and replay
+  - offline development
   - contract testing
   - differential testing
-  - clean-room implementation

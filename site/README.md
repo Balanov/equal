@@ -24,10 +24,11 @@ npm run build
 
 The static deliverable is `dist/`. It can be served from any ordinary web server at `/equal/`; asset URLs are relative.
 
-- `src/main.js` — language, demo, benchmark, clipboard, and native GitHub API counters.
+- `src/main.js` — language, interactive local-sandbox demo, benchmark values, clipboard, OS-specific download, and native GitHub API counters.
 - `src/i18n.js` — English and Russian interface text.
 - `src/results.js` — generated from `bench/results`; do not edit manually.
 - `public/results/` — downloadable raw JSON evidence.
-- `assets/` — EQUAL logo and IBM Plex license texts.
+- `public/examples/` — a real generated cassette and independently validated OpenAPI document.
+- `assets/` — EQUAL logo plus Manrope and JetBrains Mono license texts.
 
 See `../CREDITS.md` for asset and reference credits.

@@ -12,7 +12,7 @@ func TestVersion(t *testing.T) {
 	if code := run(context.Background(), []string{"--version"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("exit code %d: %s", code, stderr.String())
 	}
-	if stdout.String() != "EQUAL 0.1.0\n" {
+	if stdout.String() != "EQUAL 0.2.0\n" {
 		t.Fatalf("version output %q", stdout.String())
 	}
 }
@@ -28,7 +28,7 @@ func TestUsageAndUnknownCommand(t *testing.T) {
 }
 
 func TestRequiredFlags(t *testing.T) {
-	for _, command := range []string{"record", "replay", "verify", "inspect"} {
+	for _, command := range []string{"record", "replay", "verify", "inspect", "export"} {
 		var stdout, stderr bytes.Buffer
 		if code := run(context.Background(), []string{command}, &stdout, &stderr); code != 1 {
 			t.Fatalf("%s exit code %d, stderr %s", command, code, stderr.String())

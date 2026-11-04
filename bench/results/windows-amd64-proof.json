@@ -1,12 +1,12 @@
 {
   "suite": "equal-end-to-end-proof-v1",
-  "measured_at_utc": "2026-11-04T17:42:43.245133+00:00",
+  "measured_at_utc": "2026-11-04T19:25:27.806947+00:00",
   "platform": "Windows-11-10.0.28020-SP0",
   "machine": "AMD64",
   "python": "3.12.16",
   "executable": "F:\\Штука для P2P экономики\\equal\\bin\\equal.exe",
-  "executable_bytes": 7492608,
-  "checks_passed": 20,
+  "executable_bytes": 7776768,
+  "checks_passed": 22,
   "checks": [
     {
       "name": "record proxies status",
@@ -64,6 +64,16 @@
       "detail": ""
     },
     {
+      "name": "export writes valid OpenAPI 3.1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "export includes observed endpoints and redactions",
+      "passed": true,
+      "detail": ""
+    },
+    {
       "name": "offline replay canonicalizes query order",
       "passed": true,
       "detail": "200"
@@ -71,7 +81,7 @@
     {
       "name": "replay exposes provenance",
       "passed": true,
-      "detail": "{'Content-Type': 'application/json', 'Date': 'Wed, 04 Nov 2026 17:42:41 GMT', 'Server': 'BaseHTTP/0.6 Python/3.12.16', 'X-Equal-Replay': '1', 'Content-Length': '68'}"
+      "detail": "{'Content-Type': 'application/json', 'Date': 'Wed, 04 Nov 2026 19:25:25 GMT', 'Server': 'BaseHTTP/0.6 Python/3.12.16', 'X-Equal-Replay': '1', 'Content-Length': '68'}"
     },
     {
       "name": "offline replay redacts response secret",
@@ -106,7 +116,7 @@
     {
       "name": "verify locates JSON and binary drift",
       "passed": true,
-      "detail": "{'body', 'body/name'}"
+      "detail": "{'body/name', 'body'}"
     }
   ]
 }

@@ -1,39 +1,42 @@
 <div align="center">
   <img src="assets/logo.svg" alt="EQUAL logo" width="112">
   <h1>EQUAL</h1>
-  <p><strong>Different implementation. Same API.</strong></p>
-  <p>One 7 MB static binary. One JSONL cassette. Both sides of the API.<br>Record any SDK · Replay offline · Verify another implementation.</p>
-  <p>Linux · macOS · Windows · amd64 + arm64 · MIT</p>
+  <p><strong>Turn real API traffic into a local sandbox and OpenAPI.</strong></p>
+  <p>One 7.4 MB static binary. Any HTTP SDK. No runtime or account.<br>Linux · macOS · Windows · amd64 + arm64 · MIT</p>
   <p><a href="https://balanov.pro/equal/">Landing page: balanov.pro/equal</a></p>
 </div>
 
-EQUAL is a language-neutral HTTP compatibility laboratory. Point an existing SDK at the local recorder, and it captures real requests and responses in a reviewable JSONL cassette. The same artifact then does two jobs:
+EQUAL lets you keep building when an API is unavailable, rate-limited, paid per call, or unsafe to trigger from CI.
 
-1. **Client side:** replay the recorded service offline while your SDK and tests run unchanged apart from their base URL.
-2. **Server side:** send the recorded requests to another implementation and report field-level compatibility differences.
+Point your application at the local recorder and run its normal workflow once. EQUAL turns the observed requests and responses into three useful artifacts:
 
-No language plugin, control plane, database, runtime, account, telemetry, or connector catalogue. HTTP is the integration boundary, so a new service does not require a new EQUAL adapter.
+1. **A local API server** that returns the recorded responses without contacting the provider.
+2. **A portable JSONL cassette** that you can review, edit, share, and version in Git.
+3. **An OpenAPI 3.1 document** for Postman, Prism, documentation tools, and SDK generators.
 
-## Why EQUAL?
+Your application only needs a configurable HTTP base URL. There is no language plugin, control plane, database, account, telemetry, or connector catalogue.
 
-- **One cassette, two proofs.** Test the consumer against a recorded provider and the replacement provider against recorded consumer traffic.
-- **Fail closed.** Replay has no upstream URL and never silently falls through to the network. Misses return 404; strict-order mismatches return 409.
-- **Readable artifacts.** JSONL cassettes are diffable in Git. UTF-8 stays readable; binary bodies use base64 without changing a byte on replay.
-- **Secrets redacted before storage.** Built-in rules cover common credential headers, query parameters, and nested JSON fields. The live upstream response is never redacted.
-- **Semantic JSON differences.** Object key order, whitespace, and equivalent JSON numbers do not create false failures. Explicit JSON Pointers can ignore volatile IDs and timestamps.
-- **Ordered scenarios.** Repeated identical requests consume responses in capture order. `--strict` also enforces global request order.
-- **Small and portable.** Go standard library only, one static binary, six release targets, MIT license.
+## What this is useful for
+
+- **Offline development.** Keep working on a plane, in a restricted network, or while the provider is down.
+- **Deterministic CI.** Stop depending on sandbox availability, rate limits, and changing third-party data.
+- **Fewer live credentials.** Record with a test credential, then run the local sandbox without the real secret.
+- **One fixture across stacks.** Share the same cassette between Python, Node, Go, mobile, and CI jobs instead of maintaining a recorder per language.
+- **API documentation from reality.** Export the observed endpoints and examples instead of writing the first OpenAPI draft by hand.
+- **Replacements and migrations.** Optionally replay recorded requests against another implementation and inspect field-level differences.
+
+EQUAL is a development and testing tool, not a production proxy. It proves only the traffic it recorded.
 
 ## Install
 
-### Unix installer
+### Unix
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Balanov/equal/main/install.sh | sh
 equal --version
 ```
 
-Set `EQUAL_VERSION=0.1.0` to pin a version and `EQUAL_INSTALL_DIR` to change `$HOME/.local/bin`.
+Set `EQUAL_VERSION=0.2.0` to pin a version and `EQUAL_INSTALL_DIR` to change `$HOME/.local/bin`.
 
 ### Windows PowerShell
 
@@ -42,9 +45,9 @@ irm https://raw.githubusercontent.com/Balanov/equal/main/install.ps1 | iex
 equal --version
 ```
 
-Set `$env:EQUAL_VERSION = "0.1.0"` to pin a version and `$env:EQUAL_INSTALL_DIR` to change the install directory.
+Set `$env:EQUAL_VERSION = "0.2.0"` to pin a version and `$env:EQUAL_INSTALL_DIR` to change the install directory.
 
-### Go install and source builds
+### Go
 
 With Go 1.26+:
 
@@ -52,7 +55,7 @@ With Go 1.26+:
 go install github.com/Balanov/equal/cmd/equal@latest
 ```
 
-Or:
+Or build a checkout:
 
 ```sh
 git clone https://github.com/Balanov/equal.git
@@ -60,11 +63,11 @@ cd equal
 go build -trimpath -ldflags="-s -w" -o bin/equal ./cmd/equal
 ```
 
-On Windows, use `bin/equal.exe`. Every release includes SHA-256 checksums. The binaries are not code-signed yet, so verify the checksum before allowing an OS warning.
+On Windows, use `bin/equal.exe`. Every release includes SHA-256 checksums. The binaries are not code-signed yet.
 
-## Quick start
+## Start in 90 seconds
 
-Record a real provider through any HTTP SDK:
+### 1. Record your application's real traffic
 
 ```sh
 equal record \
@@ -72,28 +75,41 @@ equal record \
   --cassette account.jsonl
 ```
 
-The recorder listens on `127.0.0.1:8080`. Set the SDK's base URL to `http://127.0.0.1:8080` and run its normal workflow. For a plain HTTP example:
+The recorder listens on `127.0.0.1:8080`. Set your application's existing API base URL to `http://127.0.0.1:8080` and use it normally. For example:
 
 ```sh
 curl http://127.0.0.1:8080/v1/account \
   -H "Authorization: Bearer $TEST_TOKEN"
 ```
 
-Stop the recorder with Ctrl+C. Inspect the cassette and **review it for sensitive data**:
+Stop the recorder with Ctrl+C and **review the cassette for sensitive data**:
 
 ```sh
 equal inspect --cassette account.jsonl
 ```
 
-Replay the provider offline:
+### 2. Run the local copy without the provider
 
 ```sh
 equal replay --cassette account.jsonl
 ```
 
-Run the same SDK workflow against `http://127.0.0.1:8080`. The original provider is not contacted. A request that is absent from the cassette fails explicitly.
+Run the same application against the same local base URL. The recorded responses come back without contacting the original provider. An unrecorded request returns an explicit 404 instead of silently reaching the network.
 
-Verify a clean-room implementation, migration, or rewritten service:
+### 3. Export OpenAPI
+
+```sh
+equal export \
+  --cassette account.jsonl \
+  --out openapi.json \
+  --title 'Account API'
+```
+
+Import `openapi.json` into your existing API tools. See the complete synthetic [cassette](examples/cassette.jsonl) and its [generated OpenAPI document](examples/openapi.json). The generated example was independently validated against the OpenAPI 3.1 schema.
+
+## Compare another implementation
+
+This is an additional workflow for clean-room replacements, migrations, and rewrites:
 
 ```sh
 equal verify \
@@ -105,7 +121,7 @@ equal verify \
   --json compatibility-report.json
 ```
 
-Exit code 0 means every observed interaction matched under the selected rules. Exit code 3 means at least one difference was found. The JSON report identifies status, header, JSON Pointer, or binary body differences.
+EQUAL sends the recorded requests to the candidate and compares status, `Content-Type`, `Location`, semantic JSON, and binary bodies. Exit code 0 means every observed interaction matched under your rules; exit code 3 identifies incompatibility. Use disposable test tenants because verification can trigger real side effects.
 
 ## Commands
 
@@ -125,7 +141,7 @@ equal record --target URL --cassette FILE [options]
 | `--max-body BYTES` | `16777216` | Per-message body limit |
 | `--timeout DURATION` | `30s` | Upstream request timeout |
 
-An existing cassette is never replaced unless `--overwrite` is explicit. Entries are written as responses complete and restored into arrival order by interaction ID.
+The live caller receives the original response; only the stored copy is redacted. Existing cassettes require explicit `--overwrite`.
 
 ### `replay`
 
@@ -133,9 +149,21 @@ An existing cassette is never replaced unless `--overwrite` is explicit. Entries
 equal replay --cassette FILE [--strict] [--match-header NAME]
 ```
 
-Matching uses method, escaped path, canonical query parameters, and the request body. JSON object key order and whitespace are normalized; array order remains significant. `--match-header` adds selected request headers. Repeated identical requests consume recorded responses in order. `--strict` requires the exact global interaction sequence.
+Matching uses method, escaped path, canonical query parameters, and the request body. JSON object key order and whitespace are normalized; array order remains significant. Repeated identical requests consume responses in capture order. `--strict` enforces the global interaction sequence.
 
-Replay never accepts a target or upstream option. It has no live passthrough mode.
+Replay has no upstream option and no live passthrough mode.
+
+### `export`
+
+```text
+equal export --cassette FILE [--out openapi.json] [--title NAME] [--api-version VERSION]
+```
+
+Without `--out`, the OpenAPI JSON is written to stdout. Output files are created without overwriting an existing file.
+
+The document includes observed paths, methods, query parameters, JSON request bodies, response statuses, schemas, examples, binary content encodings, and interaction IDs. Numeric and UUID path segments become documented inferred parameters. Alternative responses are retained in a provenance extension.
+
+This is an **example-driven, incomplete specification**, not the provider's authoritative schema. Unobserved endpoints and fields are absent. JSON array item schemas currently follow the first observed item; non-JSON request bodies are not described. Redacted examples remain redacted.
 
 ### `verify`
 
@@ -143,18 +171,14 @@ Replay never accepts a target or upstream option. It has no live passthrough mod
 equal verify --target URL --cassette FILE [options]
 ```
 
-By default, verification compares status, `Content-Type`, `Location`, and the response body. JSON is compared semantically, including exact array order and arbitrary-precision numeric equivalence. Non-JSON bodies are compared byte for byte.
-
 | Flag | Meaning |
 | --- | --- |
-| `--ignore-json POINTER` | Ignore a response JSON Pointer; `*` matches one array/object segment; repeatable |
+| `--ignore-json POINTER` | Ignore a response JSON Pointer; `*` matches one segment; repeatable |
 | `--compare-header NAME` | Replace the default compared response headers; repeatable |
-| `--header 'Name: value'` | Inject candidate credentials or other request headers; repeatable |
-| `--json FILE` | Write a machine-readable verification report |
+| `--header 'Name: value'` | Inject candidate credentials or request headers; repeatable |
+| `--json FILE` | Write a machine-readable report |
 | `--max-body BYTES` | Per-message body limit |
 | `--timeout DURATION` | Candidate request timeout |
-
-Verification replays requests in their original order and can trigger real side effects. Use disposable test tenants, never production workloads.
 
 ### `inspect`
 
@@ -162,7 +186,7 @@ Verification replays requests in their original order and can trigger real side 
 equal inspect --cassette FILE [--json]
 ```
 
-Print capture provenance, interaction count, redaction settings, methods, URIs, and statuses without contacting either implementation.
+Print capture provenance, interaction count, redaction settings, methods, URIs, and statuses without network access.
 
 ## Cassette format
 
@@ -173,27 +197,21 @@ The first line is an `equal/v1` header. Every following line is one interaction:
 {"id":1,"request":{"method":"GET","uri":"/v1/account","headers":{"Authorization":["[REDACTED]"]}},"response":{"status":200,"headers":{"Content-Type":["application/json"]},"body":"{\"plan\":\"free\"}","body_encoding":"utf8"}}
 ```
 
-Text uses `body_encoding=utf8`; non-UTF-8 payloads use `base64`. No compression, custom database, or schema registry is required. See [the architecture and invariants](docs/ARCHITECTURE.md).
-
-## What compatibility means
-
-EQUAL proves compatibility only for the captured interactions and selected comparison rules. A recording does not cover unobserved endpoints, error branches, timing behavior, concurrency semantics, or future provider changes. Ignoring a field is an explicit decision, not automatic noise detection.
-
-Version 0.1.0 handles ordinary buffered HTTP request-response traffic. It does not record WebSocket sessions, SSE streams, or SDKs that cannot address an HTTP base URL. It is a test tool, not a production proxy. See [SECURITY.md](SECURITY.md) for capture, network, and privacy boundaries.
+UTF-8 remains readable; non-UTF-8 payloads use base64. See [architecture and invariants](docs/ARCHITECTURE.md) and [SECURITY.md](SECURITY.md). Built-in redaction is a safeguard, not a privacy guarantee: inspect every cassette before sharing it.
 
 ## Measured locally
 
-Windows 11 AMD64, Go 1.27.3, EQUAL 0.1.0 and Hoverfly 1.12.17:
+Windows 11 AMD64, Go 1.27.3, EQUAL 0.2.0 and Hoverfly 1.12.17:
 
 | Observation | EQUAL | Hoverfly | Scenario |
 | --- | ---: | ---: | --- |
-| Median process launch | **9.987 ms** | 40.730 ms | 100 version launches, warm cache |
-| Executable | **7,492,608 bytes** | 22,234,112 bytes | Complete standalone binaries |
-| Median replay batch | **235.152 ms** | 519.807 ms | 2,000 unique GETs, 16 keep-alive clients |
-| Median requests/s | **8,505** | 3,848 | Same replay scenario |
-| Median working set | **14.43 MiB** | 31.64 MiB | 2,000 loaded interactions |
+| Median process launch | **9.050 ms** | 39.984 ms | 100 version launches, warm cache |
+| Executable | **7,776,768 bytes** | 22,234,112 bytes | Complete standalone binaries |
+| Median replay batch | **269.472 ms** | 551.879 ms | 2,000 unique GETs, 16 keep-alive clients |
+| Median requests/s | **7,422** | 3,624 | Same replay scenario |
+| Median working set | **14.57 MiB** | 31.98 MiB | 2,000 loaded interactions |
 
-The replay ratio is 2.21× in this exact scenario, not a universal performance ranking. Hoverfly provides a broader simulation and matching feature set. Startup/import was excluded; fresh server state was used for every batch. Raw samples, generated equivalent fixtures, and commands are in [BENCHMARKS.md](BENCHMARKS.md) and [bench/](bench/README.md).
+The replay ratio is 2.05× in this exact scenario, not a universal performance ranking. Hoverfly provides a broader simulation and matching feature set. Startup/import was excluded; fresh server state was used for every batch. Raw samples and reproduction commands are in [BENCHMARKS.md](BENCHMARKS.md) and [bench/](bench/README.md).
 
 ## End-to-end proof
 
@@ -202,7 +220,7 @@ go build -o bin/equal.exe ./cmd/equal
 python bench/proof.py ./bin/equal.exe
 ```
 
-The proof drives the real executable through record → upstream shutdown → offline replay → compatible verification → intentional incompatibility. The recorded Windows run passed **20 checks**, including secret redaction, binary fidelity, fail-closed misses, machine-readable reports, and exit code 3 on drift. It uses synthetic loopback services and needs no credentials or third-party Python packages.
+The proof drives the real executable through record → OpenAPI export → upstream shutdown → offline replay → compatible verification → intentional incompatibility. The recorded Windows run passed **22 checks**, including OpenAPI generation, secret redaction, binary fidelity, fail-closed misses, reports, and exit code 3 on drift. It uses synthetic loopback services and needs no credentials or third-party Python packages.
 
 ## Develop
 
@@ -213,7 +231,7 @@ go test -race -count=1 ./...
 go vet ./...
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/RESEARCH.md](docs/RESEARCH.md). Portable cassette tooling, public-SDK compatibility fixtures, precise bug reports, and performance reproductions are welcome.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/RESEARCH.md](docs/RESEARCH.md). Portable cassette tooling, public-SDK fixtures, precise bug reports, and performance reproductions are welcome.
 
 The bilingual landing source lives in `site/`:
 
@@ -231,7 +249,7 @@ The production site is static output in `site/dist/`; asset URLs work under `/eq
 
 ```bibtex
 @misc{balanov2026equal,
-  title        = {EQUAL: One Cassette, Both Sides of the API},
+  title        = {EQUAL: Turn Real API Traffic into a Local Sandbox and OpenAPI},
   author       = {Balanov, Anton},
   year         = {2026},
   howpublished = {\url{https://github.com/Balanov/equal}},
