@@ -215,6 +215,18 @@ go vet ./...
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/RESEARCH.md](docs/RESEARCH.md). Portable cassette tooling, public-SDK compatibility fixtures, precise bug reports, and performance reproductions are welcome.
 
+The bilingual landing source lives in `site/`:
+
+```sh
+python bench/render_site.py
+cd site
+npm install
+npm run dev
+npm run build
+```
+
+The production site is static output in `site/dist/`; asset URLs work under `/equal/`.
+
 ## Citation
 
 ```bibtex

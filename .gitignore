@@ -4,5 +4,6 @@ coverage.out
 *.test
 site/node_modules/
 site/dist/
+site/verification/
 bench/tools/
 bench/tmp/
