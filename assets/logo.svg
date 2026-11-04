@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">EQUAL</title>
+  <path fill="#151715" d="M64 80h160v72H64zm224 0h160v72H288zM64 216h384v80H64zm0 136h160v72H64zm224 0h160v72H288z"/>
+  <path fill="#ff5c35" d="M224 80h64v72h-64zm0 272h64v72h-64z"/>
+</svg>

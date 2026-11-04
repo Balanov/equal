@@ -1,0 +1,112 @@
+{
+  "suite": "equal-end-to-end-proof-v1",
+  "measured_at_utc": "2026-11-04T17:42:43.245133+00:00",
+  "platform": "Windows-11-10.0.28020-SP0",
+  "machine": "AMD64",
+  "python": "3.12.16",
+  "executable": "F:\\Штука для P2P экономики\\equal\\bin\\equal.exe",
+  "executable_bytes": 7492608,
+  "checks_passed": 20,
+  "checks": [
+    {
+      "name": "record proxies status",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "record leaves live response intact",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "record preserves 201",
+      "passed": true,
+      "detail": "201"
+    },
+    {
+      "name": "record does not redact caller response",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "record preserves binary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cassette excludes live-query-secret",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cassette excludes live-body-secret",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cassette excludes live-header-secret",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cassette excludes candidate-secret",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cassette is readable JSONL",
+      "passed": true,
+      "detail": "4 lines"
+    },
+    {
+      "name": "inspect sees three interactions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "offline replay canonicalizes query order",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "replay exposes provenance",
+      "passed": true,
+      "detail": "{'Content-Type': 'application/json', 'Date': 'Wed, 04 Nov 2026 17:42:41 GMT', 'Server': 'BaseHTTP/0.6 Python/3.12.16', 'X-Equal-Replay': '1', 'Content-Length': '68'}"
+    },
+    {
+      "name": "offline replay redacts response secret",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "offline replay preserves binary",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "replay miss fails closed",
+      "passed": true,
+      "detail": "404"
+    },
+    {
+      "name": "verify accepts compatible implementation",
+      "passed": true,
+      "detail": "EQUAL verify: 3/3 compatible · 0 failed"
+    },
+    {
+      "name": "verify report is machine-readable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "verify returns exit 3 on incompatibility",
+      "passed": true,
+      "detail": "FAIL #2 POST /v1/items?access_token=%5BREDACTED%5D\n  body/name\n  expected: \"Ada\"\n  actual:   \"Broken\"\nFAIL #3 GET /v1/binary\n  body\n  expected: \u0000�\u0001\u0002\u0003\u0000\n  actual:   broken\nEQUAL verify: 1/3 compatible · 2 failed"
+    },
+    {
+      "name": "verify locates JSON and binary drift",
+      "passed": true,
+      "detail": "{'body', 'body/name'}"
+    }
+  ]
+}

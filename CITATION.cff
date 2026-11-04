@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: If you use EQUAL, please cite it as below.
+title: "EQUAL: One Cassette, Both Sides of the API"
+authors:
+  - family-names: Balanov
+    given-names: Anton
+version: 0.1.0
+date-released: 2026-11-04
+url: https://balanov.pro/equal/
+repository-code: https://github.com/Balanov/equal
+license: MIT
+type: software
+abstract: >-
+  EQUAL is a language-neutral HTTP compatibility laboratory. It records real
+  SDK traffic into a redacted JSONL cassette, replays it offline, and verifies
+  another API implementation with semantic, field-level differences.
+keywords:
+  - API compatibility
+  - record and replay
+  - contract testing
+  - differential testing
+  - clean-room implementation
