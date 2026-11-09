@@ -1,9 +1,27 @@
 <div align="center">
-  <img src="assets/logo.svg" alt="EQUAL logo" width="112">
-  <h1>EQUAL</h1>
+  <img src="docs/readme/hero.png" alt="EQUAL — one real API capture becomes offline replay, OpenAPI 3.1 and candidate verification" width="100%">
   <p><strong>Turn real API traffic into a local sandbox and OpenAPI.</strong></p>
-  <p>One 7.4 MB static binary. Any HTTP SDK. No runtime or account.<br>Linux · macOS · Windows · amd64 + arm64 · MIT</p>
-  <p><a href="https://balanov.pro/equal/">Landing page: balanov.pro/equal</a></p>
+  <p>One 7.4 MB static binary. Any HTTP SDK. No runtime or account.</p>
+  <p>Linux · macOS · Windows · amd64 + arm64 · MIT</p>
+  <p>
+    <a href="#install">Install</a> ·
+    <a href="#start-in-90-seconds">90-second start</a> ·
+    <a href="#measured-locally">Proof</a> ·
+    <a href="BENCHMARKS.md">Benchmarks</a> ·
+    <a href="https://balanov.pro/equal/">Website</a> ·
+    <a href="README_RU.md">Русский</a>
+  </p>
+  <p>
+    <a href="https://github.com/Balanov/equal/actions/workflows/ci.yml"><img src="https://github.com/Balanov/equal/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+    <a href="https://github.com/Balanov/equal/releases/latest"><img src="https://img.shields.io/github/v/release/Balanov/equal" alt="Latest release"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
+    <a href="go.mod"><img src="https://img.shields.io/badge/Go-1.26%2B-00ADD8?logo=go&logoColor=white" alt="Go 1.26+"></a>
+  </p>
+</div>
+
+<div align="center">
+  <img src="docs/readme/demo.gif" alt="Recorded EQUAL end-to-end proof: record, redaction, OpenAPI export, offline replay, fail-closed miss and candidate verification pass in 22 checks" width="100%">
+  <p><sub>Recorded end-to-end proof: <a href="bench/results/windows-amd64-proof.json">22 checks passed</a> · <a href="bench/README.md">Run the proof yourself</a>.</sub></p>
 </div>
 
 EQUAL lets you keep building when an API is unavailable, rate-limited, paid per call, or unsafe to trigger from CI.
@@ -26,6 +44,11 @@ Your application only needs a configurable HTTP base URL. There is no language p
 - **Replacements and migrations.** Optionally replay recorded requests against another implementation and inspect field-level differences.
 
 EQUAL is a development and testing tool, not a production proxy. It proves only the traffic it recorded.
+
+<div align="center">
+  <img src="docs/readme/architecture.png" alt="EQUAL cassette boundary: one redacted capture feeds replay, OpenAPI export and candidate verification, with 22 of 22 recorded checks passing" width="100%">
+  <p><sub>Replay has no upstream option or live passthrough. An unrecorded request fails closed. <a href="docs/ARCHITECTURE.md">Architecture and invariants</a>.</sub></p>
+</div>
 
 ## Install
 
