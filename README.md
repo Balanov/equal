@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/readme/hero-v2.png" alt="EQUAL — one real API capture becomes offline replay, OpenAPI 3.1 and candidate verification with 22 recorded checks" width="100%">
+  <img src="docs/readme/hero.png" alt="EQUAL — one real API capture becomes offline replay, OpenAPI 3.1 and candidate verification" width="100%">
   <p><strong>Turn real API traffic into a local sandbox and OpenAPI.</strong></p>
   <p>One 7.4 MB static binary. Any HTTP SDK. No runtime or account.</p>
   <p>Linux · macOS · Windows · amd64 + arm64 · MIT</p>

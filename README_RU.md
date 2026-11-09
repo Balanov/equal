@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/readme/hero-v2.png" alt="EQUAL — один реальный API-capture превращается в offline replay, OpenAPI 3.1 и проверку кандидата с 22 записанными проверками" width="100%">
+  <img src="docs/readme/hero.png" alt="EQUAL — один реальный API-capture превращается в offline replay, OpenAPI 3.1 и проверку кандидата" width="100%">
   <p><strong>Превратите реальный API-трафик в локальную sandbox и OpenAPI.</strong></p>
   <p>Один статический бинарник 7,4 МБ · любой HTTP SDK · MIT</p>
   <p><a href="README.md">English</a> · <a href="#установка">Установка</a> · <a href="#старт-за-90-секунд">Старт за 90 секунд</a> · <a href="#проверка">Проверка</a> · <a href="BENCHMARKS.md">Измерения</a> · <a href="https://balanov.pro/equal/">Сайт</a></p>
