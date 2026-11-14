@@ -280,6 +280,14 @@ The production site is static output in `site/dist/`; asset URLs work under `/eq
 }
 ```
 
+## Related projects
+
+- [uncut](https://github.com/Balanov/uncut) — the lossless, headless coding-agent harness.
+- [shim](https://github.com/Balanov/shim) — a local-first harness for any model, MCP servers and Agent Skills.
+- [latch](https://github.com/Balanov/latch) — one tiny HTTPS contract between any agent and any service.
+- [verdict](https://github.com/Balanov/verdict) — a local semantic verifier for agent tool calls.
+
+
 ## License
 
 MIT. Fork it, modify it, ship it. See [LICENSE](LICENSE).
