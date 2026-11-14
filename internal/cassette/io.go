@@ -6,8 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 )
 
@@ -93,6 +95,12 @@ func Load(path string) (Header, []Entry, error) {
 		}
 		if entry.Request.Method == "" || entry.Request.URI == "" || entry.Response.Status < 100 || entry.Response.Status > 999 {
 			return Header{}, nil, fmt.Errorf("invalid interaction %d", entry.ID)
+		}
+		if strings.ContainsAny(entry.Request.URI, " \t\r\n") {
+			return Header{}, nil, fmt.Errorf("interaction %d invalid request URI %q: whitespace is not allowed", entry.ID, entry.Request.URI)
+		}
+		if _, err := url.ParseRequestURI(entry.Request.URI); err != nil {
+			return Header{}, nil, fmt.Errorf("interaction %d request URI %q: %w", entry.ID, entry.Request.URI, err)
 		}
 		if _, err := entry.Request.Bytes(); err != nil {
 			return Header{}, nil, fmt.Errorf("interaction %d request: %w", entry.ID, err)
