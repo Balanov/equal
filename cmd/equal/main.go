@@ -19,7 +19,7 @@ import (
 	"github.com/Balanov/equal/internal/lab"
 )
 
-var Version = "0.2.0"
+var Version = "0.2.1"
 
 type stringsFlag []string
 
