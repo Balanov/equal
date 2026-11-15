@@ -1,3 +1,8 @@
+## 0.2.1 - 2026-11-15
+
+### Fixed
+
+- A cassette whose request URI does not parse, or that carries raw whitespace, is refused when it is loaded. The message names the interaction and the URI, and the cassette never reaches replay, verify, inspect or export.
 # Changelog
 
 ## 0.2.0 — 2026-11-04
