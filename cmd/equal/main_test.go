@@ -12,7 +12,7 @@ func TestVersion(t *testing.T) {
 	if code := run(context.Background(), []string{"--version"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("exit code %d: %s", code, stderr.String())
 	}
-	if stdout.String() != "EQUAL 0.2.0\n" {
+	if stdout.String() != "EQUAL 0.2.1\n" {
 		t.Fatalf("version output %q", stdout.String())
 	}
 }
